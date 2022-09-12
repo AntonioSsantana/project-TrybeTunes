@@ -5,15 +5,15 @@ import { createUser } from '../services/userAPI';
 
 class Login extends React.Component {
   state = {
-    name: '',
-    disabled: true,
-    loading: false,
+    NAME: '',
+    DISABLED: true,
+    LOADING: false,
   };
 
   onClickButton = async () => {
-    const { name } = this.state;
+    const { NAME: name } = this.state;
     const { history } = this.props;
-    this.setState({ loading: true });
+    this.setState({ LOADING: true });
     await createUser({ name });
     history.push('/search');
   };
@@ -21,17 +21,17 @@ class Login extends React.Component {
   handleChangeInput = (event) => {
     const CHARACTER_MIN = 3;
 
-    this.setState({ name: event.target.value });
+    this.setState({ NAME: event.target.value });
 
     if (event.target.value.length >= CHARACTER_MIN) {
-      this.setState({ disabled: false });
+      this.setState({ DISABLED: false });
     } else {
-      this.setState({ disabled: true });
+      this.setState({ DISABLED: true });
     }
   };
 
   render() {
-    const { disabled, loading } = this.state;
+    const { DISABLED, LOADING } = this.state;
 
     return (
       <div data-testid="page-login">
@@ -46,13 +46,13 @@ class Login extends React.Component {
           <button
             type="submit"
             data-testid="login-submit-button"
-            disabled={ disabled }
+            disabled={ DISABLED }
             onClick={ this.onClickButton }
           >
             Entrar
           </button>
           {
-            loading ? <Loading /> : null
+            LOADING ? <Loading /> : null
           }
         </label>
       </div>
