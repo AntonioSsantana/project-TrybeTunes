@@ -1,44 +1,43 @@
-import React, { cloneElement } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-class CardAlbums extends React.Component {
-  state = {
-    artistName: this.props.artistName,
-    artWorkUrl100: this.props.artworkUrl100,
-    collectionName: this.props.collectionName,
-    releaseDate: this.props.releaseDate,
-    trackCount: this.props.trackCount,
-  };
-
+class AlbumCard extends React.Component {
   render() {
-    const { artistName, artWorkUrl100, collectionName, releaseDate,
-      trackCount } = this.state;
+    const { ALBUMS } = this.props;
+    if (ALBUMS.length === 0) {
+      return (<span>Nenhum álbum foi encontrado</span>);
+    }
     return (
       <div>
-        <h3>
-          Artista:
-          {artistName}
-        </h3>
-        <span>
-          Albúm:
-          {collectionName}
-        </span>
-        <br />
-        <span>
-          Músicas:
-          {trackCount}
-        </span>
-        <br />
-        <span>
-          <em>
-            Data de lançamento:
-            {releaseDate}
-          </em>
-        </span>
-        <br />
-        <img src={ artWorkUrl100 } alt={ collectionName } width="150px" />
+        <input
+          data-testid="search-artist-input"
+          type="text"
+          placeholder="Nome do artista"
+        />
+        {ALBUMS.map((i) => (
+          <div key={ i.collectionId }>
+            <img src={ i.artworkUrl100 } alt={ i.collectionName } />
+            <span>{i.collectionName}</span>
+            <span>{i.artistName}</span>
+            <Link
+              to={ `/album/${i.collectionId}` }
+              data-testid={ `link-to-album-${i.collectionId}` }
+            />
+          </div>
+        ))}
       </div>
     );
   }
 }
 
-export default CardAlbums;
+AlbumCard.propTypes = {
+  ALBUMS: PropTypes.arrayOf(PropTypes.shape({
+    collectionId: PropTypes.number,
+    collectionName: PropTypes.string,
+    artistName: PropTypes.string,
+    artworkUrl100: PropTypes.string,
+  })).isRequired,
+};
+
+export default AlbumCard;

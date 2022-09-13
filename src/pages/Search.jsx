@@ -2,7 +2,6 @@ import React from 'react';
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
 import CardAlbums from './components/CardAlbums';
 import Header from './components/Header';
-import Loading from './components/Loading';
 
 class Search extends React.Component {
   state = {
@@ -10,7 +9,6 @@ class Search extends React.Component {
     ALBUMS: [],
     BUTTON_DISABLED: true,
     BUTTON_CLICKED: false,
-    IS_LOADING: true,
   };
 
   handleChangeArtist = (event) => {
@@ -28,28 +26,48 @@ class Search extends React.Component {
 
   handleClickApiAlbums = async () => {
     const { ARTIST } = this.state;
-    const RESPONSE = await searchAlbumsAPI(ARTIST);
-    if (RESPONSE) {
+    const DATA = await searchAlbumsAPI(ARTIST);
+    if (DATA) {
       this.setState({
-        ALBUMS: RESPONSE,
+        ALBUMS: DATA,
         BUTTON_CLICKED: true,
-        IS_LOADING: false,
       });
     }
   };
 
   render() {
     const { ARTIST, BUTTON_DISABLED, ALBUMS,
-      BUTTON_CLICKED, IS_LOADING } = this.state;
+      BUTTON_CLICKED } = this.state;
+
+    let returnedAlbums;
+    let resultAlbums;
+
+    if (BUTTON_CLICKED) {
+      returnedAlbums = (
+        <section>
+          <div>
+            <h6>
+              Resultado de álbuns de:
+              {' '}
+              {ARTIST}
+            </h6>
+            <CardAlbums ALBUMS={ ALBUMS } />
+          </div>
+        </section>
+      );
+      resultAlbums = returnedAlbums;
+      return resultAlbums;
+    }
+
     return (
       <div data-testid="page-search">
         <Header />
         <div>
           <h4>Pesquisa</h4>
           <form>
-            <label htmlFor="artist-input">
+            <label htmlFor="search-artist-input">
               <input
-                id="artist-input"
+                id="search-artist-input"
                 data-testid="search-artist-input"
                 type="text"
                 placeholder="Nome do artista"
@@ -66,22 +84,9 @@ class Search extends React.Component {
             </label>
           </form>
         </div>
-        {!BUTTON_CLICKED ? null : IS_LOADING ? <Loading />
-          : <div>
-            <h2>
-              Resultado de álbuns de:
-              {ARTIST}
-            </h2>
-            {ALBUMS.map((i) => (<CardAlbums
-              key={ i.collectionId }
-              artistName={ i.artistName }
-              artworkUrl100={ i.artworkUrl100 }
-              collectionName={ i.collectionName }
-              releaseDate={ i.releaseDate }
-              trackCount={ i.trackCount }
-            />
-            ))}
-            </div>}
+        {
+          resultAlbums
+        }
       </div>
     );
   }
